@@ -27,7 +27,7 @@ def carrega_split(nome_split):
     ''' carregando os splits a partir dos arquivos JSON gerados pelo script split.py '''
     with open(SPLITS_DIR / f"{nome_split}.json", "r") as f:
         dados = json.load(f)
-    return [(image_dataset_path, item['rotulo']) for item in dados]
+    return [(image_dataset_path / item['caminho'], item['rotulo']) for item in dados]
 
 if __name__ == "__main__":
 

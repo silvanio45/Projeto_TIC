@@ -147,7 +147,11 @@ pip install -r requirements.txt
 # 4. (Opcional) Regere os splits — os de config/splits/ já estão versionados
 python scripts/split.py
 
-# 5. Treine o modelo
+# 5. (Opcional) Teste os módulos prontos
+python src/data.py    # carrega um batch: torch.Size([32, 3, 224, 224])
+python src/model.py   # saída do modelo: torch.Size([4, 15])
+
+# 6. Treine o modelo (em desenvolvimento)
 python src/train.py
 ```
 
@@ -165,12 +169,31 @@ python src/train.py
 
 ## ✅ Roadmap
 
+### Concluído
+
 - [x] Definição do problema e formalização (T, E, P)
 - [x] Escolha do dataset e análise de limitações
-- [ ] Análise exploratória e pré-processamento (splits prontos)
-- [ ] Baseline com Transfer Learning
-- [ ] Geração de dados sintéticos e rebalanceamento
-- [ ] Avaliação comparativa
+- [x] Splits treino/validação/teste (70/10/20, estratificado) com caminhos relativos — `scripts/split.py`, `config/splits/`
+- [x] Carregamento dos dados — `src/data.py`
+  - `carrega_split()`: lê os splits em JSON
+  - `FolhasDataset`: abre as imagens sob demanda e aplica os transforms
+  - `get_dataloaders()`: devolve os loaders de treino (com augmentation e shuffle), validação e teste
+- [x] Modelo — `src/model.py`: `cria_modelo()` carrega a ResNet-50 pré-treinada no ImageNet e troca a camada `fc` por uma de 15 classes
+
+### Em andamento
+
+- [ ] Treinamento do baseline — `src/train.py`
+  - [ ] Preparação: device, dados, modelo, função de perda (`CrossEntropyLoss`) e otimizador (`Adam`, `lr=1e-4`)
+  - [ ] Laço de uma época de treino
+  - [ ] Avaliação na validação a cada época e salvamento do melhor modelo (por F1 macro) em `models/`
+
+### A fazer
+
+- [ ] Avaliação no teste — `src/evaluate.py`: acurácia, F1 por classe, matriz de confusão e saída em `results/`
+- [ ] Análise exploratória — `notebooks/analise.ipynb`: distribuição das classes e exemplos de imagens
+- [ ] Rebalanceamento clássico (`class_weight` / `WeightedRandomSampler`) como comparação
+- [ ] Geração de dados sintéticos — `src/generate.py`, com qualidade medida por FID
+- [ ] Avaliação comparativa entre os experimentos (com mais de uma seed)
 - [ ] Interpretabilidade com Grad-CAM
 - [ ] Exportação para modelo leve (MobileNet)
 

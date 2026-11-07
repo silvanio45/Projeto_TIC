@@ -151,7 +151,7 @@ python scripts/split.py
 python src/data.py    # carrega um batch: torch.Size([32, 3, 224, 224])
 python src/model.py   # saída do modelo: torch.Size([4, 15])
 
-# 6. Treine o modelo (em desenvolvimento)
+# 6. Treine o baseline (salva o melhor modelo em models/baseline_resnet50.pth)
 python src/train.py
 ```
 
@@ -179,17 +179,17 @@ python src/train.py
   - `FolhasDataset`: abre as imagens sob demanda e aplica os transforms
   - `get_dataloaders()`: devolve os loaders de treino (com augmentation e shuffle), validação e teste
 - [x] Modelo — `src/model.py`: `cria_modelo()` carrega a ResNet-50 pré-treinada no ImageNet e troca a camada `fc` por uma de 15 classes
+- [x] Treinamento do baseline — `src/train.py`
+  - `treinar_epoca()`: uma época de treino com `CrossEntropyLoss` e `Adam` (`lr=1e-4`), devolve a loss média
+  - `avaliar()`: loss, acurácia e F1 macro na validação
+  - `main()`: treina por `EPOCAS` épocas e salva o melhor modelo (por F1 macro na validação) em `models/baseline_resnet50.pth`
 
 ### Em andamento
 
-- [ ] Treinamento do baseline — `src/train.py`
-  - [ ] Preparação: device, dados, modelo, função de perda (`CrossEntropyLoss`) e otimizador (`Adam`, `lr=1e-4`)
-  - [ ] Laço de uma época de treino
-  - [ ] Avaliação na validação a cada época e salvamento do melhor modelo (por F1 macro) em `models/`
+- [ ] Avaliação no teste — `src/evaluate.py`: acurácia, F1 por classe, matriz de confusão e saída em `results/`
 
 ### A fazer
 
-- [ ] Avaliação no teste — `src/evaluate.py`: acurácia, F1 por classe, matriz de confusão e saída em `results/`
 - [ ] Análise exploratória — `notebooks/analise.ipynb`: distribuição das classes e exemplos de imagens
 - [ ] Rebalanceamento clássico (`class_weight` / `WeightedRandomSampler`) como comparação
 - [ ] Geração de dados sintéticos — `src/generate.py`, com qualidade medida por FID
